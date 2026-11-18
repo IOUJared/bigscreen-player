@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Bigscreen player</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+    iframe { display: block; border: 0; width: 100%; height: 100%; }
+    p { color: #888; font: 14px -apple-system, sans-serif; padding: 16px; }
+  </style>
+</head>
+<body>
+  <script>
+    // YouTube rejects embeds without an HTTP Referer (player error 153). A top-level
+    // navigation carries none, so the app loads this page and the player is an iframe
+    // whose request carries this origin as its referer.
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var id = params.get("v") || "";
+      if (!/^[A-Za-z0-9_-]{11}$/.test(id)) {
+        document.body.innerHTML = "<p>Missing or invalid video id.</p>";
+        return;
+      }
+      var autoplay = params.get("autoplay") === "1" ? "1" : "0";
+      var frame = document.createElement("iframe");
+      frame.src =
+        "https://www.youtube.com/embed/" +
+        encodeURIComponent(id) +
+        "?autoplay=" + autoplay + "&playsinline=1&rel=0";
+      frame.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+      frame.allowFullscreen = true;
+      document.body.appendChild(frame);
+    })();
+  </script>
+</body>
+</html>
